@@ -2,11 +2,11 @@
 
 ## Table des matières
 
-\[TOC\]
+[TOC]
 
 ## Introduction
 
-Le repository du projet est trouvable en cliquant sur \[ce lien\](<https://github.com/Marc-Harony/23-813-BROISIN-ARAKHSIS>)
+Le repository du projet est trouvable en cliquant sur [ce lien](<https://github.com/Marc-Harony/23-813-BROISIN-ARAKHSIS>)
 
 ## Partie I : mise en place d'une maquette de réseau local avec haute disponibilité
 

@@ -44,9 +44,11 @@ Théoriquement, 32 routes via OSPF car 2 x 16 routes vers les réseau interne de
 | 0\.0.0.0/0 | 10\.250.0.253 | \* |
 | 0\.0.0.0/0 | 10\.250.0.254 | \* |
 
+Dans ces tables, on à les 3 routes directement connectées, 2 routes récupérées avec OSPF et enfin les 2 routes par défaut.
+
 #### Question 2 - Rôle de VRRP (Virtual Router Redundancy Protocol)
 
-*VRRP* utilise la notion de routeur virtuel, auquel est associée une adresse IP et une adresse MAC  virtuelle. Les rôles des routeur *master* et *backup* sont également utilisés et associés aux routeurs d'un groupe *VRRP*. Le routeur *master* est associé à l'adresse IP virtuelle du groupe. C'est lui qui va répondre aux requêtes *ARP* des clients sur cette adresse IP. Un ou plusieurs routeurs *backup* pourront reprendre le rôle de *master* en cas de défaillance de celui-ci.
+*VRRP* utilise la notion de routeur virtuel, auquel est associée une adresse IP et une adresse MAC virtuelle. Les rôles des routeur *master* et *backup* sont également utilisés et associés aux routeurs d'un groupe *VRRP*. Le routeur *master* est associé à l'adresse IP virtuelle du groupe. C'est lui qui va répondre aux requêtes *ARP* des clients sur cette adresse IP. Un ou plusieurs routeurs *backup* pourront reprendre le rôle de *master* en cas de défaillance de celui-ci.
 
 #### Question 3 - Fonctionnement général de VRRP
 

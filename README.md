@@ -18,7 +18,7 @@ Le repository du projet est trouvable en cliquant sur [ce lien](<https://github.
 
 #### Question 1 - Combien de lignes dans la table de routage ?
 
-Théoriquement, 32 routes via OSPF car 2 x 16 routes vers les réseau interne de nos collègue (il y a 16 binômes et 2 routeurs/binômes), deux routes directement connectées 10.250.0.0/24 (externe) et 10.200.1.0/24 (interne) et une route pour le management (192.168.170.0/23), soit un total de **36 routes**.
+Théoriquement, 32 routes via OSPF car 2 x 16 routes vers les réseau interne de nos collègue (il y a 16 binômes et 2 routeurs/binômes), deux routes directement connectées 10.250.0.0/24 (externe) et 10.200.1.0/24 (interne) et une route pour le management (192.168.170.0/23), soit un total de **35 routes**.
 
 ##### Table de routage R1
 

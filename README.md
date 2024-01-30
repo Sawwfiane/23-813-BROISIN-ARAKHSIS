@@ -44,11 +44,11 @@ Théoriquement, 32 routes via OSPF car 2 x 16 routes vers les réseau interne de
 | 0\.0.0.0/0 | 10\.250.0.253 | \* |
 | 0\.0.0.0/0 | 10\.250.0.254 | \* |
 
-Dans ces tables, on à les 3 routes directement connectées, 2 routes récupérées avec OSPF et enfin les 2 routes par défaut.
+Dans ces tables, on a les 3 routes directement connectées, 2 routes récupérées avec OSPF et enfin les 2 routes par défaut.
 
 #### Question 2 - Rôle de VRRP (Virtual Router Redundancy Protocol)
 
-*VRRP* utilise la notion de routeur virtuel, auquel est associée une adresse IP et une adresse MAC virtuelle. Les rôles des routeur *master* et *backup* sont également utilisés et associés aux routeurs d'un groupe *VRRP*. Le routeur *master* est associé à l'adresse IP virtuelle du groupe. C'est lui qui va répondre aux requêtes *ARP* des clients sur cette adresse IP. Un ou plusieurs routeurs *backup* pourront reprendre le rôle de *master* en cas de défaillance de celui-ci.
+VRRP orchestre la redondance en attribuant une adresse IP commune à un groupe de routeurs, avec un routeur principal répondant aux requêtes. En cas de défaillance de ce dernier, un routeur de secours prend le relais sans interruption de service, assurant une connectivité réseau fiable et constante.
 
 #### Question 3 - Fonctionnement général de VRRP
 
@@ -68,4 +68,4 @@ Par defaut un paquet contenant des message VRRP est echangé en *multicast* tout
 
 #### Question 4 - Rôle de OSPF dans la topologie
 
-Avec plus de 32 routeurs sur le VLAN 633 et l'usage de VRRP par chaque binôme, on aura 15 routeurs de binôme visibles sur le VLAN, en plus du routeur de sortie (RPROF1), totalisant un minimum de 16 routes. L'utilisation du routage statique serait inappropriée en raison de sa complexité de gestion. OSPF est préférable car il ajoutera dynamiquement les routes nécessaires, simplifiant la gestion du réseau.
+OSPF (Open Shortest Path First) est un protocole de routage dynamique qui détermine automatiquement le chemin le plus efficace pour les données à travers un réseau. Contrairement au routage statique, qui requiert une configuration manuelle et ne s'adapte pas aux changements de réseau, OSPF ajuste les itinéraires en temps réel, améliorant la haute disponibilité et la redondance. Cette approche élimine la nécessité de saisir les routes à la main, réduisant les erreurs de configuration et simplifiant la maintenance du réseau.

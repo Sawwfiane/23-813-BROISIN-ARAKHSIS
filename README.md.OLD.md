@@ -48,36 +48,26 @@ Dans ces tables, on a les 3 routes directement connectées, 2 routes récupéré
 
 #### Question 2 - Rôle de VRRP (Virtual Router Redundancy Protocol)
 
-Le protocole de redondance de routeur virtuel, VRRP, est un protocole qui a pour but d'augmenter la haute disponibilité de la passerelle par défaut dans un LAN, de sorte que, lors de la défaillance du routeur principal, un routeur de secours puisse prendre le relais pour router les paquets du LAN vers l'extérieur et ce de manière invisible pour les machines du LAN.
+*VRRP* orchestre la redondance en attribuant une adresse IP commune à un groupe de routeurs, avec un routeur principal répondant aux requêtes. En cas de défaillance de ce dernier, un routeur de secours prend le relais sans interruption de service, assurant une connectivité réseau fiable et constante.
 
 #### Question 3 - Fonctionnement général de VRRP
 
-Voici comment fonctionne le protocole VRRP : 
+1. **Configuration des Routeurs**: Plusieurs routeurs sont configurés dans un groupe VRRP. Un de ces routeurs est désigné comme le routeur principal (*Master*), tandis que les autres sont des routeurs de secours (*Backup*). Ils partagent une adresse IP virtuelle, qui est l'adresse utilisée par les machines du réseau pour acheminer leur trafic.
+2. **Élection du Routeur Principal**: L'élection du routeur principal se fait selon la priorité configurée sur chaque routeur. Le routeur avec la plus haute priorité devient le principal. En cas d'égalité, l'adresse IP la plus élevée est utilisée comme critère de sélection.
+3. **Surveillance de l'État**: Le routeur principal envoie régulièrement des messages de type "*advertisement*" pour indiquer qu'il est en fonction. Les routeurs de secours écoutent ces messages pour déterminer si le routeur principal est toujours opérationnel.
+4. **Basculement en Cas de Défaillance**: Si les routeurs de secours cessent de recevoir des messages du routeur principal pendant un certain temps (délai déterminé par la configuration), ils supposent que le routeur principal a échoué. Le routeur de secours avec la priorité la plus élevée devient alors le nouveau routeur principal.
+5. **Reprise du Routeur Défaillant**: Lorsque le routeur principal initial se remet en ligne après une défaillance, il peut reprendre son rôle de routeur principal ou rester en tant que routeur de secours, selon la configuration (notamment l'option de préemption).
+6. **Utilisation par les Machines A et B**: Les machines sur le réseau local, telles que A et B, configurées pour utiliser l'adresse IP virtuelle comme passerelle par défaut, continuent de fonctionner normalement sans interruption, même si le routeur principal change, car l'adresse IP virtuelle reste constante.
 
-On dispose de deux ou plusieurs routeurs qui accedent au LAN et aux autres réseaux sur lesquels les paquets du LAN doivent sortir.
+Les machines A et B seront configurées avec pour passerelle l'adresse *IP* virtuelle de notre cluster de routeur, ils ne verront pas la coupure en cas de défaillance car ils enverront leur paquets toujours à la même *IP*, seulement l'adresse *MAC* sera changée dans leur table *ARP* mais ceci est invisible pour l'utilisateur.
 
-On choisit les routeurs que l'on souhaite utiliser pour configurer une passerelle et on les configures avec les parametres suivants : 
+Lorsqu'un routeur *backup* devient défaillant alors le *master* reste tel quel et reçoit les paquets. Si le *master* tombe alors le routeur *backup* devient actif. Dans le cas où il y aurait plusieurs routeurs *bakcup*, c'est le routeur qui possède la plus haute priorité qui devient le routeur *master.* Cette solution ne permet pas le load-balancing mais permet tout de même un certain niveau de redondance.
 
-- Un numéros de groupe VRID
-
-
-- Une prioritée codée sur un octet (avec une valeur comprise entre 1 et 254)
-- Une adresse IP virtuelle commune pour tous. 
-
-A l'aide de ces informations les routeurs du groupes vont définir une adresse mac virtuelle qui sera egale à **00-00-5E-00-01-{VRID}.**
-
-Les routeurs comuniques entre eux a intervalle regulier via des message multicast sur l'dresse 224.0.0.18 et avec le champs protocole de l'en-tête ip a 0x112.
-
-Ces messages servent a echanger entre eux leurs priorités, le routeur avec la plus hauite priorité passe maitre. En cas d'égalité de deux pritorité, le routeur avec l'adresse ip la plus "grande" (numériquement) passe maitre.
-
-  
-Le routeur maitre se présente au réseaux avec l'ip et la mac virtuelle. Les autres routeurs passe en mode backup, ils continues d'envoyer des paquet en multicast mais restent passive niveau routage pour le LAN.
-
-Sur les machines du LAN on parametre la paserelle par défaut avec l'adresse virtuelle. Cette configuration est faite une seule fois (lors de la configuraation DHCP par exemple). Cela permet a ce que le chqgement de maitre soit invisible pour les équipement du LAN. et 
+Par defaut un paquet contenant des message *VRRP* est echangé en *multicast* toute les secondes (*ethertype* **112**). Dans ces message il est indiqué la priorité du *master*, si la priorité du *master* est superieure à celle des routeurs *backup,* il reste passif. À défaut de message d'un autre routeur *master* dans le sous-réseau (après 3,6 s par défaut), un routeur *backup* se proclamera *master*.
 
 #### Question 4 - Rôle de OSPF dans la topologie
 
-Dans notre cas, grâce au protocole OSPF on s'assure que les deux routeurs R1 et R2 possède les mêmes routes dans leurs table de routage. il faut en effet si l'un des routeurs tombe que l’autre soit en mesure d'acheminer les paquets du LAN vers les mêmes destination que le maitre.
+OSPF (Open Shortest Path First) est un protocole de routage dynamique qui détermine automatiquement le chemin le plus efficace pour les données à travers un réseau. Contrairement au routage statique, qui requiert une configuration manuelle et ne s'adapte pas aux changements de réseau, OSPF ajuste les itinéraires en temps réel, améliorant la haute disponibilité et la redondance. Cette approche élimine la nécessité de saisir les routes à la main, réduisant les erreurs de configuration et simplifiant la maintenance du réseau.
 
 #### Question 5 - Tests de fonctionnement
 
@@ -168,54 +158,11 @@ Avec une priorité supérieure, R1 devient le routeur Maître et R2 le routeur d
 
 #### Question 8 - Test global du réseau
 
-Sur PC A réaliser un ping vers google.fr :
+Sur PC A réaliser un ping vers google.fr : 
 
 - Éteindre le routeur maitre (R1), vérifer le temps de bascule du routeur maitre de R1 vers R2, le ping doit continuer de passer.
 
   **Résultat :** Après avoir coupé le lien entre R1 et le LAN des machines A et B (10.200.1.0/24) on observe que B prend immédiatement le rôle de maître. Côté PC-A le ping n'est pas interrompu. Lorsque le lien est coupé, on remarque un saut dans les numéros de séquence des pings.
-- Allumer R1, vérifier le temps de bascule du routeur maître de R2 vers R1, le ping doit continuer de passer.
+- Allumer R1, vérifer le temps de bascule du routeur maître de R2 vers R1, le ping doit continuer de passer.
 
-  **Résultat :** Le routeur R1 a repris immédiatement le rôle de maitre. De la même manière, le temps de bascule est invisible pour le PC A ; seul est visible un saut dans les numéros de séquence de la même manière que pour le test précédent.
-- Éteindre le lien entre le routeur maitre (R1) et le cœur de réseau (10.250.0.0/24), la route doit être redirigé vers le routeur R2.
-
-  **Résultat :** Après une courte période de 1s sans connectivité, la VIP (**10\.200.1.254,** actuellement sur R1 car le routeur à toujours la plus haute priorité) va **redistribué** la route vers R2 (**10\.200.1.252**)
-
-  ```bash
-  64 octets de 8.8.8.8 : icmp_seq=10 ttl=114 temps=1036 ms
-  64 octets de 8.8.8.8 : icmp_seq=11 ttl=114 temps=12.2 ms
-  De 10.200.1.254 icmp_seq=18 Redirect Network(Nouveau sautsuivant : 10.200.1.252)
-  64 octets de 8.8.8.8 : icmp_seq=18 ttl=114 temps=12.0 ms
-  64 octets de 8.8.8.8 : icmp_seq=19 ttl=114 temps=13.5 ms
-  ```
-
-![image.png](.attachments.4982/image.png)
-
-#### Question 9 - Configuration SNMPv3
-
-```
-Configuration : 
-R1~# snmp-server location pm-serv16
-R2~# snmp-server location pm-serv14
-RX~# snmp-server contact Arakhsis-Broisin
-
-Récupération sysLocation : 
-A~# snmpget -v 3 -u snmpuser -l authPriv -a SHA -A auth_pass -x AES -X crypt_pass 10.200.1.251 1.3.6.1.2.1.1.6.0
-```
-
-#### Question 10 : Encodage utilisé par SNMP
-
-Lors de l'émission de données SNMP, l'encodage utilisé est le BER
-
-<https://prod.liveshare.vsengsaas.visualstudio.com/join?796A96237B3BEF8DE061449F9CBD9A9A0D18>
-
-#### Question 12 - OID branche VRRP
-
-L'OID relatif de la branche VRRP par rapport à mib-2 est **1\.3.6.1.2.1**
-
-```bash
-Configuration de SNMPv2
-RX~# snmp-server community 123test123 RO
-
-Test de configuration de SNMPv2
-A~# snmpwalk -v 2c -c 123test123 10.200.2.X system
-```
+  **Résultat :** Le routeur R1 a repris immédiatement le rôle de maûtre. De la même manière, le temps de bascule est invisible pour le PC A ; seul est visible un saut dans les numéros de séquence de la même manière que pour le test précédent.

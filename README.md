@@ -188,7 +188,7 @@ Sur PC A réaliser un ping vers google.fr :
   64 octets de 8.8.8.8 : icmp_seq=19 ttl=114 temps=13.5 ms
   ```
 
-![image.png](.attachments.4982/image.png)
+![image.png](.attachments.3011/capture_q8.png)
 
 #### Question 9 - Configuration SNMPv3
 
@@ -206,11 +206,28 @@ A~# snmpget -v 3 -u snmpuser -l authPriv -a SHA -A auth_pass -x AES -X crypt_pas
 
 Lors de l'émission de données SNMP, l'encodage utilisé est le BER (Basic Encoding Rules). Cet encodage est utilisé pour encoder les données SNMP en un format binaire qui peut être transmis sur le réseau.
 
-<https://prod.liveshare.vsengsaas.visualstudio.com/join?796A96237B3BEF8DE061449F9CBD9A9A0D18>
 
 #### Question 11 - Analyse de trame SNMPv2
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, molestie ipsum et, consequat nunc
+Nous avons réalisé la capture d'une trame `snmp-get` entre le PC-B et R1.
+Il s'agit d'une trame snmp `get-request` qui utilise la version 2 de SNMP et qui demande quelle est la valeur de `system.sysLocation`.
+On voit à travers cette échange que la théorie étudiée en cours est valide, car on aperçoit que le `comunity-string` est bien visible en clair ainsi que l'objet de la requête et la réponse.
+```
+11:21:06.035525 IP 813-B.45730 > 10.200.1.251.snmp:  C="123test123" GetRequest(28)  system.sysLocation.0
+        0x0000:  0800 27a2 d1b8 0800 27eb f080 0800 4500  ..'.....'.....E.
+        0x0010:  004b 0c9f 4000 4011 1577 0ac8 0102 0ac8  .K..@.@..w......
+        0x0020:  01fb b2a2 00a1 0037 18d5 302d 0201 0104  .......7..0-....
+        0x0030:  0a31 3233 7465 7374 3132 33a0 1c02 0464  .123test123....d
+        0x0040:  4f72 3c02 0100 0201 0030 0e30 0c06 082b  Or<......0.0...+
+        0x0050:  0601 0201 0106 0005 00                   .........
+11:21:06.037045 IP 10.200.1.251.snmp > 813-B.45730:  C="123test123" GetResponse(37)  system.sysLocation.0="pm-serv16"
+        0x0000:  0800 27eb f080 0800 27a2 d1b8 0800 4500  ..'.....'.....E.
+        0x0010:  0054 0023 0000 ff11 a2e9 0ac8 01fb 0ac8  .T.#............
+        0x0020:  0102 00a1 b2a2 0040 f427 3036 0201 0104  .......@.'06....
+        0x0030:  0a31 3233 7465 7374 3132 33a2 2502 0464  .123test123.%..d
+        0x0040:  4f72 3c02 0100 0201 0030 1730 1506 082b  Or<......0.0...+
+        0x0050:  0601 0201 0106 0004 0970 6d2d 7365 7276  .........pm-serv
+        0x0060:  3136                                     16
+```
 
 #### Question 12 - OID branche VRRP
 
@@ -228,7 +245,7 @@ A~# snmpwalk -v 2c -c 123test123 10.200.2.X system
 
 #### Question 13 - Pourquoi la première commande échoue alors que la deuxième réussie ?
 
-Par defaut, la MIB VRRP n'est pas intallée. Nous pouvoins la trouver dans /usr/share/snmp/mibs/.
+Par defaut, la MIB VRRP n'est pas intallée. Nous pouvons la trouver dans /usr/share/snmp/mibs/.
 
 
 #### Question 14 - OID par rapport à mib-2 de la table vrrpOperTable. Relever dans la vrrpOperTable de R1 et expliquer les 8 premières colonnes et comment est constitué l’index.
@@ -242,18 +259,120 @@ Dans le fichier `VRRP-MIB`, on trouve :
 
 On peut donc en déduire son OID : `mib-2.68.1.3`
 
-| Champ | Description |
-|---|---|
-| vrrpOperVirtualMacAddr | Adresse MAC virtuelle de la VRRP |
-| vrrpOperState | Etat de la VRRP |
-| vrrpOperAdminState | Etat administratif de la VRRP |
-| vrrpOperPriority | Priorité de la VRRP |
-| vrrpOperIpAddrCount | Nombre d'adresses IP |
-| vrrpOperMasterIpAddr | Adresse IP du `master` |
-| vrrpOperPrimaryIpAddr | Adresse IP primaire |
-| vrrpOperAuthType | Type d'authentification |
+```
+[etudiant@813-B ~]$ snmpwalk -v 2c -c 123test123 10.200.1.252 mib-2.68.1.3
+SNMPv2-SMI::mib-2.68.1.3.1.2.2.1 = Hex-STRING: 00 00 5E 00 01 01
+SNMPv2-SMI::mib-2.68.1.3.1.3.2.1 = INTEGER: 2
+SNMPv2-SMI::mib-2.68.1.3.1.4.2.1 = INTEGER: 1
+SNMPv2-SMI::mib-2.68.1.3.1.5.2.1 = INTEGER: 100
+SNMPv2-SMI::mib-2.68.1.3.1.6.2.1 = INTEGER: 1
+SNMPv2-SMI::mib-2.68.1.3.1.7.2.1 = IpAddress: 10.200.1.251
+SNMPv2-SMI::mib-2.68.1.3.1.8.2.1 = IpAddress: 10.200.1.254
+SNMPv2-SMI::mib-2.68.1.3.1.9.2.1 = INTEGER: 1
+SNMPv2-SMI::mib-2.68.1.3.1.10.2.1 = ""
+SNMPv2-SMI::mib-2.68.1.3.1.11.2.1 = INTEGER: 1
+SNMPv2-SMI::mib-2.68.1.3.1.12.2.1 = INTEGER: 1
+SNMPv2-SMI::mib-2.68.1.3.1.13.2.1 = Timeticks: (1757126) 4:52:51.26
+SNMPv2-SMI::mib-2.68.1.3.1.14.2.1 = INTEGER: 1
+SNMPv2-SMI::mib-2.68.1.3.1.15.2.1 = INTEGER: 1
+
+```
+
+| Champ | Description | Valeur |
+|---|---| :---: |
+| vrrpOperVirtualMacAddr | Adresse MAC virtuelle de la VRRP | 00 00 5E 00 01 01|
+| vrrpOperState | Etat de la VRRP | 2 |
+| vrrpOperAdminState | Etat administratif de la VRRP | 1 |
+| vrrpOperPriority | Priorité de la VRRP | 100 |
+| vrrpOperIpAddrCount | Nombre d'adresses IP | 1 |
+| vrrpOperMasterIpAddr | Adresse IP du `master` | 10.200.1.251 |
+| vrrpOperPrimaryIpAddr | Adresse IP primaire | 10.200.1.254 |
+| vrrpOperAuthType | Type d'authentification | 1 |
 
 D'après la MIB on a: `INDEX { ifIndex, vrrpOperVrId }`.
 
 L'inex est constitué de l'index de l'interface et de l'ID de la VRRP.
 
+
+#### Question 15 - Sur quel firewall appliquer configurer l'exception ?
+
+L'exception est configurée sur la machine qui sert de serveur, soit la machine B. On utilise la commande `sudo firewall-cmd --zone=public --add-port=5201/tcp` pour ouvrir le port 5201, port utilisé par iPerf3.
+
+
+```
+[root@813-A etudiant]# iperf3 -c 10.200.1.2
+Connecting to host 10.200.1.2, port 5201
+[  5] local 10.200.1.1 port 42122 connected to 10.200.1.2 port 5201
+[ ID] Interval           Transfer     Bitrate         Retr  Cwnd
+[  5]   0.00-1.00   sec   115 MBytes   964 Mbits/sec    0   3.00 MBytes       
+[  5]   1.00-2.00   sec   111 MBytes   933 Mbits/sec    0   3.00 MBytes       
+[  5]   2.00-3.00   sec   112 MBytes   944 Mbits/sec    0   3.00 MBytes       
+[...]    
+[  5]   7.00-8.00   sec   111 MBytes   933 Mbits/sec    0   2.35 MBytes       
+[  5]   8.00-9.00   sec   112 MBytes   944 Mbits/sec    0   2.52 MBytes       
+[  5]   9.00-10.00  sec   111 MBytes   933 Mbits/sec   11   1.32 MBytes       
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bitrate         Retr
+[  5]   0.00-10.00  sec  1.09 GBytes   941 Mbits/sec   21             sender
+[  5]   0.00-10.01  sec  1.09 GBytes   938 Mbits/sec                  receiver
+
+iperf Done.
+```
+
+#### Question 16 - Protocle de transport pour le test de débit.
+
+Le protocole de transport utilisé par défaut pour les tests de débit avec iperf est le protocole TCP.
+
+#### Question 17 - Pourquoi les débits calculés sont-ils différents ?
+
+Cela s'explique par le fait que Capinfo c
+
+iPerf ne prend en compte que les données utiles transmises (après la couche 3) alors que capinfos prend en compte l'ensemble des données transmises, y compris les en-têtes Ethernet, IP et UDP. Cette différence de calcul explique la différence de débit entre les deux captures.
+
+#### Question 18 - Les compteurs d’octets sont disponibles en version 32 bits ou en version 64 bits. Justifier précisément quels OID il faut utiliser
+
+Il ne faut pas que le compteur reboucle 2 fois entre deux mesures ni occuper de l'espace mémoire inutilement.
+Le rebouclage dépend dy débit de l'interface et de la durée entre les deux mesures.
+Les routeurs étant relativement récents l'espace mémoire n'est pas réellement un problème.
+<br>
+*Dans le cas d'un compteur 32 bits :*
+Débit interface | Durée max entre deux mesures
+|---|---|
+|1G| 34 secondes |
+|10G| 3,4 secondes |
+|100G| 0,34 secondes |
+
+*Dans le cas d'un compteur 64 bits :*
+Débit interface | Durée max entre deux mesures
+|---|---|
+|1G| environ 4600 ans |
+|10G| environ 460 ans |
+|100G| environ 46 ans |
+
+<br>
+
+Techniquement, on pourrait utiliser des compteurs 32 bits car le débit du lien est de 1G et on envoie des données pendant 25 secondes. Néanmoins, il faut prendre en compte les erreur humaines qui peuvent survenir lors de la mesure. Par soucis de fiabilité et de confort, il est préférable d'utiliser des compteurs 64 bits. (ifHCInOctets, ifHCOutOctets) car elles réduisent le risque de réinitialisation du compteur durant les tests de débit grâce à une capacité de comptage nettement supérieure (2^32 max pour 32bits contre 2^64 max pour 64bits, soit 4 milliards de fois plus élevée), offrant ainsi des mesures plus fiables.
+
+`ifHCInOctets: .1.3.6.1.2.1.31.1.1.1.6`
+`ifHCOutOctets: .1.3.6.1.2.1.31.1.1.1.10`
+
+#### Question 19 - Trouver facilement le débit entrant et sortant grâce à SNMP.
+
+
+Sur A, on récupère la valeur du compteur d'octets : 
+```
+snmpwalk -v3  -l authPriv -u snmpuser -a SHA -A auth_pass -x AES -X crypt_pass 10.200.1.251 IF-MIB::ifHCOutOctets.3
+IF-MIB::ifHCOutOctets.3 = Counter64: 57796375
+```
+
+Génération d'un trafic de 500kbit/s depuis la machine A vers la machine B durant 25 secondes : 
+```
+iperf3 --bitrate 500K -u -c 192.168.141.208 -t 25
+```
+
+Récupération de la valeur du compteur de R1 après le transit de données depuis la machine A :
+```
+snmpwalk -v3  -l authPriv -u snmpuser -a SHA -A auth_pass -x AES -X crypt_pass 10.200.1.251 IF-MIB::ifHCOutOctets.3
+```
+
+Avant la commande iPerf, le compteur valait `59609314` . Après la commande iPerf, le compteur valait `61165454` octets. La différence entre les deux valeurs est de `1556140` octets. Ainsi, on peut calculer un débit valant `1556140 / 25 = 62245 octets/s`, soit environ `497 kbits/s`.

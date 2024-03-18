@@ -204,14 +204,20 @@ A~# snmpget -v 3 -u snmpuser -l authPriv -a SHA -A auth_pass -x AES -X crypt_pas
 
 #### Question 10 : Encodage utilisé par SNMP
 
-Lors de l'émission de données SNMP, l'encodage utilisé est le BER
+Lors de l'émission de données SNMP, l'encodage utilisé est le BER (Basic Encoding Rules). Cet encodage est utilisé pour encoder les données SNMP en un format binaire qui peut être transmis sur le réseau.
 
 <https://prod.liveshare.vsengsaas.visualstudio.com/join?796A96237B3BEF8DE061449F9CBD9A9A0D18>
 
+#### Question 11 - Analyse de trame SNMPv2
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, molestie ipsum et, consequat nunc
+
 #### Question 12 - OID branche VRRP
 
-L'OID relatif de la branche VRRP par rapport à mib-2 est **1\.3.6.1.2.1**
+`::= { mib-2 68 }`
 
+
+#### Configuration de SNMPv2
 ```bash
 Configuration de SNMPv2
 RX~# snmp-server community 123test123 RO
@@ -219,3 +225,35 @@ RX~# snmp-server community 123test123 RO
 Test de configuration de SNMPv2
 A~# snmpwalk -v 2c -c 123test123 10.200.2.X system
 ```
+
+#### Question 13 - Pourquoi la première commande échoue alors que la deuxième réussie ?
+
+Par defaut, la MIB VRRP n'est pas intallée. Nous pouvoins la trouver dans /usr/share/snmp/mibs/.
+
+
+#### Question 14 - OID par rapport à mib-2 de la table vrrpOperTable. Relever dans la vrrpOperTable de R1 et expliquer les 8 premières colonnes et comment est constitué l’index.
+
+
+Dans le fichier `VRRP-MIB`, on trouve :
+
+`vrrpMIB ::= { mib-2 68 }`
+`vrrpOperations ::= { vrrpMIB 1 }`
+`vrrpOperTable ::= { vrrpOperations 3 }`
+
+On peut donc en déduire son OID : `mib-2.68.1.3`
+
+| Champ | Description |
+|---|---|
+| vrrpOperVirtualMacAddr | Adresse MAC virtuelle de la VRRP |
+| vrrpOperState | Etat de la VRRP |
+| vrrpOperAdminState | Etat administratif de la VRRP |
+| vrrpOperPriority | Priorité de la VRRP |
+| vrrpOperIpAddrCount | Nombre d'adresses IP |
+| vrrpOperMasterIpAddr | Adresse IP du `master` |
+| vrrpOperPrimaryIpAddr | Adresse IP primaire |
+| vrrpOperAuthType | Type d'authentification |
+
+D'après la MIB on a: `INDEX { ifIndex, vrrpOperVrId }`.
+
+L'inex est constitué de l'index de l'interface et de l'ID de la VRRP.
+

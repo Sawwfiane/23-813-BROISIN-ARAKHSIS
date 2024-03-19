@@ -2,39 +2,7 @@
 
 ## Table des matières
 
-- [TP - Mini-Projet supervision](#tp---mini-projet-supervision)
-  - [Table des matières](#table-des-matières)
-  - [Introduction](#introduction)
-  - [Partie I : mise en place d'une maquette de réseau local avec haute disponibilité](#partie-i--mise-en-place-dune-maquette-de-réseau-local-avec-haute-disponibilité)
-    - [Schéma du réseau :](#schéma-du-réseau-)
-    - [Étude théorique préparatoire](#étude-théorique-préparatoire)
-      - [Question 1 - Combien de lignes dans la table de routage ?](#question-1---combien-de-lignes-dans-la-table-de-routage-)
-        - [Table de routage R1](#table-de-routage-r1)
-        - [Table de routage R2](#table-de-routage-r2)
-      - [Question 2 - Rôle de VRRP (Virtual Router Redundancy Protocol)](#question-2---rôle-de-vrrp-virtual-router-redundancy-protocol)
-      - [Question 3 - Fonctionnement général de VRRP](#question-3---fonctionnement-général-de-vrrp)
-      - [Question 4 - Rôle de OSPF dans la topologie](#question-4---rôle-de-ospf-dans-la-topologie)
-      - [Question 5 - Tests de fonctionnement](#question-5---tests-de-fonctionnement)
-        - [1) Tests de connectivité](#1-tests-de-connectivité)
-      - [Question 6 - Tests de fonctionnement avec OSPF](#question-6---tests-de-fonctionnement-avec-ospf)
-      - [Question 7 - Configuration de VRRP:](#question-7---configuration-de-vrrp)
-      - [Question 8 - Test global du réseau](#question-8---test-global-du-réseau)
-      - [Question 9 - Configuration SNMPv3](#question-9---configuration-snmpv3)
-      - [Question 10 : Encodage utilisé par SNMP](#question-10--encodage-utilisé-par-snmp)
-      - [Question 11 - Analyse de trame SNMPv2](#question-11---analyse-de-trame-snmpv2)
-      - [Question 12 - OID branche VRRP](#question-12---oid-branche-vrrp)
-      - [Configuration de SNMPv2](#configuration-de-snmpv2)
-      - [Question 13 - Pourquoi la première commande échoue alors que la deuxième réussie ?](#question-13---pourquoi-la-première-commande-échoue-alors-que-la-deuxième-réussie-)
-      - [Question 14 - OID par rapport à mib-2 de la table vrrpOperTable. Relever dans la vrrpOperTable de R1 et expliquer les 8 premières colonnes et comment est constitué l’index.](#question-14---oid-par-rapport-à-mib-2-de-la-table-vrrpopertable-relever-dans-la-vrrpopertable-de-r1-et-expliquer-les-8-premières-colonnes-et-comment-est-constitué-lindex)
-      - [Question 15 - Sur quel firewall appliquer configurer l'exception ?](#question-15---sur-quel-firewall-appliquer-configurer-lexception-)
-      - [Question 16 - Protocle de transport pour le test de débit.](#question-16---protocle-de-transport-pour-le-test-de-débit)
-      - [Question 17 - Pourquoi les débits calculés sont-ils différents ?](#question-17---pourquoi-les-débits-calculés-sont-ils-différents-)
-      - [Question 18 - Les compteurs d’octets sont disponibles en version 32 bits ou en version 64 bits. Justifier précisément quels OID il faut utiliser](#question-18---les-compteurs-doctets-sont-disponibles-en-version-32-bits-ou-en-version-64-bits-justifier-précisément-quels-oid-il-faut-utiliser)
-      - [Question 19 - Trouver facilement le débit entrant et sortant grâce à SNMP.](#question-19---trouver-facilement-le-débit-entrant-et-sortant-grâce-à-snmp)
-  - [Partie III : Script bash de mesure de débit en SNMP](#partie-iii--script-bash-de-mesure-de-débit-en-snmp)
-      - [Question 20 - Pourquoi est-il plus pertinent d’utiliser le cron ou les timers systemd plutôt que la fonction sleep.](#question-20---pourquoi-est-il-plus-pertinent-dutiliser-le-cron-ou-les-timers-systemd-plutôt-que-la-fonction-sleep)
-      - [Question 21 - Expliquer le problème posé par le rebouclage du compteur. Expliquer la solution à mettre en place.](#question-21---expliquer-le-problème-posé-par-le-rebouclage-du-compteur-expliquer-la-solution-à-mettre-en-place)
-
+[TOC]
 ## Introduction
 
 Le repository du projet est trouvable en cliquant sur [ce lien](https://github.com/Marc-Harony/23-813-BROISIN-ARAKHSIS)
@@ -427,8 +395,80 @@ Avant la commande iPerf, le compteur valait `59609314` . Après la commande iPer
 
 Utiliser la fonction `sleep` dans un script pour réaliser des tâches périodiques n'est pas une bonne idée car cela consomme des ressources inutilement. En effet, le script doit rester actif en permanence pour pouvoir exécuter la tâche à intervalle régulier. Cela peut être problématique si le script est exécuté sur une machine avec des ressources limitées. De plus, si le script plante, la tâche ne sera pas exécutée. En revanche, en utilisant le cron ou les timers systemd, la tâche sera exécutée même si le script plante. De plus, cela permet de mieux gérer les tâches périodiques et de les planifier à des heures précises.
 
+##### Récupération du compteur d'octets.
+![get_counter_value.sh](./scripts/get_counter_value.sh)
+
+##### Gestion de la date et stockage dans un fichier.
+![manage_date_and_store.sh](./scripts/manage_date_and_store.sh)
+
+##### Lecture de la dernière ligne du fichier, calcul et enregistrement du débit.
+![calculate_throughput.sh](./scripts/calculate_throughput.sh)
+
 > ###### Validation VI - Faire valider par l’enseignant
+
+##### Gestion du fichier vide et gestion du rebouclage du compteur d’octets.
+![manage_empty_file_and_counter_wrap.sh](./scripts/manage_empty_file_and_counter_wrap.sh)
 
 #### Question 21 - Expliquer le problème posé par le rebouclage du compteur. Expliquer la solution à mettre en place.
 
 Si le compteur d'octets revient à zéro après avoir atteint sa limite, cela crée un problème pour le calcul du débit car la valeur actuelle du compteur est alors plus petite que la précédente. Une solution à ce problème est d'ajouter 2^64 à la valeur actuelle du compteur si elle est plus petite que la précédente. Cela assure un calcul correct du débit.
+
+#### Question 22 - Relever le code de votre script.
+
+```bash
+oid_out="1.3.6.1.2.1.31.1.1.1.10.3"
+agent_ip="10.200.1.251"
+community="123test123"
+filename="/tmp/count.log"
+
+value=$(snmpwalk -v2c -c "$community" "$agent_ip" "$oid_out" | awk -F' ' '{print $4}')
+
+date=$(date "+%s")
+if [ -f "$filename" ]; then
+  last_date=$(tail -n 1 "$filename" | awk -F ';' '{print $1}')
+  last_value=$(tail -n 1 "$filename" | awk -F ';' '{print $2}')
+else
+  last_date=0
+  last_value=0
+fi
+
+if [ "$value" -lt "$last_value" ]; then
+  debit=$(((value+18446744073709599999-last_value) / (date - last_date)))
+else
+  debit=$(((value - last_value) / (date - last_date)))
+fi
+
+echo "${date};${value};${debit}" >> "$filename" 
+```
+
+
+#### Question 23 - Configuration de la tâche cron.
+
+|Fonction|Emplacement|Permissions|
+|---|---|---|
+|Stockage des scripts|`/usr/bin/scripts/`|`drxwr-xr-x`|
+|Fichier de stockage des infos|`/tmp/count.log`|`-rw-r--r--`|
+
+La configuration crontab sur l'utilisateur "etudiant" est la suivante :
+
+```bash
+crontab -e
+* * * * *  bash /usr/bin/scripts/calculate_throughtput_final.sh
+```
+
+Les étoiles signifient chaque minutes de chaque heure de chaque jour, etc... L'ip de la machine sur laquelle le script tourne est la machine A
+
+Ci dessous un exemple de traces du remplissage du fichier via la tache cron
+
+[etudiant@813-A ~]$ tail -f /tmp/count.log 
+1710844201;71602168;41
+1710844261;71604608;40
+1710844322;71607278;43
+1710844381;71609867;43
+1710844441;71612237;39
+
+> ##### Vérification VII - Faire valider par l’enseignant
+
+##### Script générique :
+![calculate_throughput_generic.sh](./scripts/calculate_throughput_generic.sh)
+

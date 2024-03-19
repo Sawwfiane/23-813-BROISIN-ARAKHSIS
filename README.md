@@ -31,7 +31,9 @@
       - [Question 17 - Pourquoi les débits calculés sont-ils différents ?](#question-17---pourquoi-les-débits-calculés-sont-ils-différents-)
       - [Question 18 - Les compteurs d’octets sont disponibles en version 32 bits ou en version 64 bits. Justifier précisément quels OID il faut utiliser](#question-18---les-compteurs-doctets-sont-disponibles-en-version-32-bits-ou-en-version-64-bits-justifier-précisément-quels-oid-il-faut-utiliser)
       - [Question 19 - Trouver facilement le débit entrant et sortant grâce à SNMP.](#question-19---trouver-facilement-le-débit-entrant-et-sortant-grâce-à-snmp)
-
+  - [Partie III : Script bash de mesure de débit en SNMP](#partie-iii--script-bash-de-mesure-de-débit-en-snmp)
+      - [Question 20 - Pourquoi est-il plus pertinent d’utiliser le cron ou les timers systemd plutôt que la fonction sleep.](#question-20---pourquoi-est-il-plus-pertinent-dutiliser-le-cron-ou-les-timers-systemd-plutôt-que-la-fonction-sleep)
+      - [Question 21 - Expliquer le problème posé par le rebouclage du compteur. Expliquer la solution à mettre en place.](#question-21---expliquer-le-problème-posé-par-le-rebouclage-du-compteur-expliquer-la-solution-à-mettre-en-place)
 
 ## Introduction
 
@@ -109,6 +111,8 @@ Sur les machines du LAN on parametre la paserelle par défaut avec l'adresse vir
 #### Question 4 - Rôle de OSPF dans la topologie
 
 Dans notre cas, grâce au protocole OSPF on s'assure que les deux routeurs R1 et R2 possède les mêmes routes dans leurs table de routage. il faut en effet si l'un des routeurs tombe que l’autre soit en mesure d'acheminer les paquets du LAN vers les mêmes destination que le maitre.
+
+> ##### Vérification I - Faire valider par l’enseignant
 
 #### Question 5 - Tests de fonctionnement
 
@@ -221,6 +225,8 @@ Sur PC A réaliser un ping vers google.fr :
 
 ![image.png](.attachments.3011/capture_q8.png)
 
+> ##### Vérification II - Faire valider par l’enseignant
+
 #### Question 9 - Configuration SNMPv3
 
 ```
@@ -232,6 +238,8 @@ RX~# snmp-server contact Arakhsis-Broisin
 Récupération sysLocation : 
 A~# snmpget -v 3 -u snmpuser -l authPriv -a SHA -A auth_pass -x AES -X crypt_pass 10.200.1.251 1.3.6.1.2.1.1.6.0
 ```
+> ##### Vérification III - Faire valider par l’enseignant
+
 
 #### Question 10 : Encodage utilisé par SNMP
 
@@ -324,6 +332,8 @@ D'après la MIB on a: `INDEX { ifIndex, vrrpOperVrId }`.
 
 L'inex est constitué de l'index de l'interface et de l'ID de la VRRP.
 
+> ##### Vérification IV - Faire valider par l’enseignant
+
 
 #### Question 15 - Sur quel firewall appliquer configurer l'exception ?
 
@@ -391,20 +401,34 @@ Techniquement, on pourrait utiliser des compteurs 32 bits car le débit du lien 
 
 
 1. Sur A, on récupère la valeur du compteur d'octets : 
-```
+```bash
 snmpwalk -v3  -l authPriv -u snmpuser -a SHA -A auth_pass -x AES -X crypt_pass 10.200.1.251 IF-MIB::ifHCOutOctets.3
 IF-MIB::ifHCOutOctets.3 = Counter64: 57796375
 ```
 
 2. Génération d'un trafic de 500kbit/s depuis la machine A vers la machine B durant 25 secondes : 
-```
+```bash
 iperf3 --bitrate 500K -u -c 192.168.141.208 -t 25
 # On cible l'interface de la machine B qui est connectée sur le VLAN141
 ```
 
 3. Récupération de la valeur du compteur de R1 après le transit de données depuis la machine A :
-```
+```bash
 snmpwalk -v3  -l authPriv -u snmpuser -a SHA -A auth_pass -x AES -X crypt_pass 10.200.1.251 IF-MIB::ifHCOutOctets.3
 ```
 
 Avant la commande iPerf, le compteur valait `59609314` . Après la commande iPerf, le compteur valait `61165454` octets. La différence entre les deux valeurs est de `1556140` octets. Ainsi, on peut calculer un débit valant `1556140 / 25 = 62245 octets/s`, soit environ `497 kbits/s`.
+
+> ##### Vérification V - Faire valider par l’enseignant
+
+## Partie III : Script bash de mesure de débit en SNMP
+
+#### Question 20 - Pourquoi est-il plus pertinent d’utiliser le cron ou les timers systemd plutôt que la fonction sleep.
+
+Utiliser la fonction `sleep` dans un script pour réaliser des tâches périodiques n'est pas une bonne idée car cela consomme des ressources inutilement. En effet, le script doit rester actif en permanence pour pouvoir exécuter la tâche à intervalle régulier. Cela peut être problématique si le script est exécuté sur une machine avec des ressources limitées. De plus, si le script plante, la tâche ne sera pas exécutée. En revanche, en utilisant le cron ou les timers systemd, la tâche sera exécutée même si le script plante. De plus, cela permet de mieux gérer les tâches périodiques et de les planifier à des heures précises.
+
+> ###### Validation VI - Faire valider par l’enseignant
+
+#### Question 21 - Expliquer le problème posé par le rebouclage du compteur. Expliquer la solution à mettre en place.
+
+Si le compteur d'octets revient à zéro après avoir atteint sa limite, cela crée un problème pour le calcul du débit car la valeur actuelle du compteur est alors plus petite que la précédente. Une solution à ce problème est d'ajouter 2^64 à la valeur actuelle du compteur si elle est plus petite que la précédente. Cela assure un calcul correct du débit.

@@ -2,7 +2,35 @@
 
 ## Table des matières
 
-[TOC]
+
+- [Introduction](#introduction)
+- [Partie I : mise en place d'une maquette de réseau local avec haute disponibilité](#partie-i-mise-en-place-dune-maquette-de-réseau-local-avec-haute-disponibilité)
+   * [Schéma du réseau :](#schéma-du-réseau-)
+   * [Étude théorique préparatoire](#étude-théorique-préparatoire)
+      + [Question 1 - Combien de lignes dans la table de routage ?](#question-1-combien-de-lignes-dans-la-table-de-routage-)
+         - [Table de routage R1](#table-de-routage-r1)
+         - [Table de routage R2](#table-de-routage-r2)
+      + [Question 2 - Rôle de VRRP (Virtual Router Redundancy Protocol)](#question-2-rôle-de-vrrp-virtual-router-redundancy-protocol)
+      + [Question 3 - Fonctionnement général de VRRP](#question-3-fonctionnement-général-de-vrrp)
+      + [Question 4 - Rôle de OSPF dans la topologie](#question-4-rôle-de-ospf-dans-la-topologie)
+      + [Question 5 - Tests de fonctionnement](#question-5-tests-de-fonctionnement)
+         - [1) Tests de connectivité](#1-tests-de-connectivité)
+      + [Question 6 - Tests de fonctionnement avec OSPF](#question-6-tests-de-fonctionnement-avec-ospf)
+      + [Question 7 - Configuration de VRRP:](#question-7-configuration-de-vrrp)
+      + [Question 8 - Test global du réseau](#question-8-test-global-du-réseau)
+      + [Question 9 - Configuration SNMPv3](#question-9-configuration-snmpv3)
+      + [Question 10 : Encodage utilisé par SNMP](#question-10-encodage-utilisé-par-snmp)
+      + [Question 11 - Analyse de trame SNMPv2](#question-11-analyse-de-trame-snmpv2)
+      + [Question 12 - OID branche VRRP](#question-12-oid-branche-vrrp)
+      + [Configuration de SNMPv2](#configuration-de-snmpv2)
+      + [Question 13 - Pourquoi la première commande échoue alors que la deuxième réussie ?](#question-13-pourquoi-la-première-commande-échoue-alors-que-la-deuxième-réussie-)
+      + [Question 14 - OID par rapport à mib-2 de la table vrrpOperTable. Relever dans la vrrpOperTable de R1 et expliquer les 8 premières colonnes et comment est constitué l’index.](#question-14-oid-par-rapport-à-mib-2-de-la-table-vrrpopertable-relever-dans-la-vrrpopertable-de-r1-et-expliquer-les-8-premières-colonnes-et-comment-est-constitué-lindex)
+      + [Question 15 - Sur quel firewall appliquer configurer l'exception ?](#question-15-sur-quel-firewall-appliquer-configurer-lexception-)
+      + [Question 16 - Protocle de transport pour le test de débit.](#question-16-protocle-de-transport-pour-le-test-de-débit)
+      + [Question 17 - Pourquoi les débits calculés sont-ils différents ?](#question-17-pourquoi-les-débits-calculés-sont-ils-différents-)
+      + [Question 18 - Les compteurs d’octets sont disponibles en version 32 bits ou en version 64 bits. Justifier précisément quels OID il faut utiliser](#question-18-les-compteurs-doctets-sont-disponibles-en-version-32-bits-ou-en-version-64-bits-justifier-précisément-quels-oid-il-faut-utiliser)
+      + [Question 19 - Trouver facilement le débit entrant et sortant grâce à SNMP.](#question-19-trouver-facilement-le-débit-entrant-et-sortant-grâce-à-snmp)
+
 
 ## Introduction
 
@@ -15,6 +43,8 @@ Le repository du projet est trouvable en cliquant sur [ce lien](https://github.c
 ![schema_reseau.png](./.attachments.3011/Schema_reseau.png)
 
 ### Étude théorique préparatoire
+
+<!-- TOC --><a name="partie-i-mise-en-place-dune-maquette-de-réseau-local-avec-haute-disponibilité"></a>
 
 #### Question 1 - Combien de lignes dans la table de routage ?
 
@@ -359,18 +389,19 @@ Techniquement, on pourrait utiliser des compteurs 32 bits car le débit du lien 
 #### Question 19 - Trouver facilement le débit entrant et sortant grâce à SNMP.
 
 
-Sur A, on récupère la valeur du compteur d'octets : 
+1. Sur A, on récupère la valeur du compteur d'octets : 
 ```
 snmpwalk -v3  -l authPriv -u snmpuser -a SHA -A auth_pass -x AES -X crypt_pass 10.200.1.251 IF-MIB::ifHCOutOctets.3
 IF-MIB::ifHCOutOctets.3 = Counter64: 57796375
 ```
 
-Génération d'un trafic de 500kbit/s depuis la machine A vers la machine B durant 25 secondes : 
+2. Génération d'un trafic de 500kbit/s depuis la machine A vers la machine B durant 25 secondes : 
 ```
 iperf3 --bitrate 500K -u -c 192.168.141.208 -t 25
+# On cible l'interface de la machine B qui est connectée sur le VLAN141
 ```
 
-Récupération de la valeur du compteur de R1 après le transit de données depuis la machine A :
+3. Récupération de la valeur du compteur de R1 après le transit de données depuis la machine A :
 ```
 snmpwalk -v3  -l authPriv -u snmpuser -a SHA -A auth_pass -x AES -X crypt_pass 10.200.1.251 IF-MIB::ifHCOutOctets.3
 ```

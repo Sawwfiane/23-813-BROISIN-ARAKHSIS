@@ -389,7 +389,7 @@ Avant la commande iPerf, le compteur valait `59609314` . Après la commande iPer
 
 > ##### Vérification V - Faire valider par l’enseignant
 
-## Partie III : Script bash de mesure de débit en SNMP
+## Partie II : Script bash de mesure de débit en SNMP
 
 #### Question 20 - Pourquoi est-il plus pertinent d’utiliser le cron ou les timers systemd plutôt que la fonction sleep.
 
@@ -460,15 +460,53 @@ Les étoiles signifient chaque minutes de chaque heure de chaque jour, etc... L'
 
 Ci dessous un exemple de traces du remplissage du fichier via la tache cron
 
+```
 [etudiant@813-A ~]$ tail -f /tmp/count.log 
 1710844201;71602168;41
 1710844261;71604608;40
 1710844322;71607278;43
 1710844381;71609867;43
 1710844441;71612237;39
-
+```
 > ##### Vérification VII - Faire valider par l’enseignant
 
 ##### Script générique :
 ![calculate_throughput_generic.sh](./scripts/calculate_throughput_generic.sh)
+
+
+## Partie III : Projet Prometheus / Grafana / Netflow
+
+### Synthèse sur Prometheus et Grafana
+<details>
+  <summary>
+    Synthèse sur Prometheus
+  </summary>
+
+**Introduction**
+
+Prometheus est un outil de surveillance et d'alerte open source, développé à l'origine par SoundCloud. Il est conçu pour gérer de façon fiable de grandes quantités de données en direct, ce qui en a fait une option privilégiée pour surveiller les infrastructures et les applications dans une variété d'organisations, allant des startups aux grandes entreprises. Il s'appuie sur une façon avancée d'organiser les données, permettant de suivre l'évolution de différentes mesures au fil du temps et de les catégoriser avec des étiquettes spécifiques, comme le nom d'une métrique et des informations complémentaires sous forme de paires clé/valeur. Cette méthode offre une souplesse notable dans la façon dont les mesures sont organisées et catégorisées, simplifiant la gestion de données de surveillance qui peuvent être très détaillées et complexes.
+
+**Fonctionnement de Prometheus**
+
+Prometheus collecte les données en utilisant le protocole HTTP. Il extrait (scrape) périodiquement les métriques exposées par les cibles configurées, comme les serveurs d'applications, les bases de données, et les matériels réseau. Les métriques sont alors stockées dans une base de données locale et peuvent être interrogées via le langage de requête PromQL (Prometheus Query Language). PromQL permet aux utilisateurs de sélectionner et d'agréger les données de séries temporelles, offrant ainsi une puissante flexibilité pour l'analyse et la visualisation des métriques. Prometheus propose également des fonctionnalités d'alerte basées sur des règles, qui peuvent déclencher des notifications via divers canaux (email, Slack, etc.) lorsque certaines conditions sont remplies.
+
+**Comparaison avec d'autres solutions de supervision**
+
+Quand on compare Prometheus à d'autres solutions de supervision, telles que Nagios, Zabbix, ou Grafana, plusieurs points clés ressortent :
+
+- Modèle de données: Contrairement à Nagios et Zabbix, qui se concentrent sur la surveillance basée sur l'état et les événements, Prometheus se distingue par son modèle de données basé sur les séries temporelles. Cela lui permet de mieux gérer les métriques à haute granularité et de fournir une analyse plus approfondie sur le comportement des systèmes sur le temps.<br>
+
+- Architecture: Prometheus utilise une architecture sans agent pour la collecte des métriques, ce qui simplifie la configuration et le déploiement par rapport aux solutions nécessitant l'installation d'agents sur les systèmes surveillés. Nagios et Zabbix, par exemple, dépendent fortement des agents pour la collecte de données, ce qui peut augmenter la complexité de la gestion et la maintenance.<br>
+
+- Performance et échelle: Grâce à son efficace modèle de stockage de séries temporelles et à son protocole de collecte léger, Prometheus excelle dans les environnements à grande échelle et haute performance. Les solutions traditionnelles peuvent rencontrer des difficultés pour traiter de grandes volumes de données en temps réel sans dégradation des performances.<br>
+
+- Écosystème et intégrations: Prometheus bénéficie d'un large écosystème et d'une communauté active, offrant une multitude d'exportateurs (exporters) pour divers services et applications. Bien que Nagios jouisse d'une longue histoire et d'une vaste bibliothèque de plugins, Prometheus propose des intégrations plus modernes et faciles à déployer pour les technologies cloud natives.<br>
+
+- Visualisation et alertes: Bien que Prometheus possède des capacités de visualisation et d'alerte, il est souvent couplé avec Grafana pour une expérience de visualisation avancée. Grafana fournit des tableaux de bord dynamiques et interactifs, surpassant les capacités de visualisation native de Prometheus et offrant une meilleure expérience utilisateur par rapport à Zabbix ou Nagios.<br>
+
+**Conclusion**
+
+En conclusion, Prometheus se distingue dans l'écosystème de la surveillance par son modèle de données performant, sa facilité de déploiement, et sa capacité à évoluer pour gérer des infrastructures de grande envergure. Sa conception sans agent, combinée à une large gamme d'intégrations et un puissant langage de requête, en fait une solution de choix pour les environnements modernes, en particulier ceux qui adoptent des pratiques DevOps et cloud native. Comparativement, les solutions traditionnelles comme Nagios et Zabbix peuvent offrir une robustesse dans des environnements moins dynamiques, mais peinent à rivaliser avec la flexibilité et l'évolutivité de Prometheus pour la surveillance des architectures contemporaines.
+
+</details>
 

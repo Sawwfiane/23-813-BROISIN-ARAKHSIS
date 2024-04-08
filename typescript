@@ -1,0 +1,17 @@
+Script started on Mon Apr  8 15:22:05 2024
+[1m[7m%[27m[1m[0m                                                                                                                                                                                                                                                             [0m[27m[24m[Jmharony@eduroam-n2ng-144159 23-813-BROISIN-ARAKHSIS % [K[?2004h>....                                                                                                                                                                                                  
+[K
+[7mDashboard de supervision des Routeurs (débit vers et depuis internet) : [27m[K
+[K
+[K
+[7mRequête PromQL débit descendant R1 : [27m[K
+[K
+[7mrate(ifHCInOctets{ifIndex="3", instance="10.200.2.253"}[$__rate_interval]) * 8[27m[K
+[K
+[7mRequête PromQL uptime R1 : [27m[K
+[K
+[7msysUpTime{instance="10.200.2.253"}[27m[K
+[K
+[K
+[K[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                                                                                             [0m[27m[24m[Jmharony@eduroam-n2ng-144159 23-813-BROISIN-ARAKHSIS % [K[?2004h

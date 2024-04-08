@@ -3,51 +3,55 @@
 ## Table des matières
 
 - [TP - Mini-Projet supervision](#tp---mini-projet-supervision)
-  * [Table des matières](#table-des-mati-res)
-  * [Introduction](#introduction)
-  * [Partie I : mise en place d'une maquette de réseau local avec haute disponibilité](#partie-i---mise-en-place-d-une-maquette-de-r-seau-local-avec-haute-disponibilit-)
-    + [Schéma du réseau :](#sch-ma-du-r-seau--)
-    + [Étude théorique préparatoire](#-tude-th-orique-pr-paratoire)
-      - [Question 1 - Combien de lignes dans la table de routage ?](#question-1---combien-de-lignes-dans-la-table-de-routage--)
-        * [Table de routage R1](#table-de-routage-r1)
-        * [Table de routage R2](#table-de-routage-r2)
-      - [Question 2 - Rôle de VRRP (Virtual Router Redundancy Protocol)](#question-2---r-le-de-vrrp--virtual-router-redundancy-protocol-)
-      - [Question 3 - Fonctionnement général de VRRP](#question-3---fonctionnement-g-n-ral-de-vrrp)
-      - [Question 4 - Rôle de OSPF dans la topologie](#question-4---r-le-de-ospf-dans-la-topologie)
-        * [Vérification I - Faire valider par l’enseignant](#v-rification-i---faire-valider-par-l-enseignant)
+  - [Table des matières](#table-des-matières)
+  - [Introduction](#introduction)
+  - [Partie I : mise en place d'une maquette de réseau local avec haute disponibilité](#partie-i--mise-en-place-dune-maquette-de-réseau-local-avec-haute-disponibilité)
+    - [Schéma du réseau :](#schéma-du-réseau-)
+    - [Étude théorique préparatoire](#étude-théorique-préparatoire)
+      - [Question 1 - Combien de lignes dans la table de routage ?](#question-1---combien-de-lignes-dans-la-table-de-routage-)
+        - [Table de routage R1](#table-de-routage-r1)
+        - [Table de routage R2](#table-de-routage-r2)
+      - [Question 2 - Rôle de VRRP (Virtual Router Redundancy Protocol)](#question-2---rôle-de-vrrp-virtual-router-redundancy-protocol)
+      - [Question 3 - Fonctionnement général de VRRP](#question-3---fonctionnement-général-de-vrrp)
+      - [Question 4 - Rôle de OSPF dans la topologie](#question-4---rôle-de-ospf-dans-la-topologie)
       - [Question 5 - Tests de fonctionnement](#question-5---tests-de-fonctionnement)
-        * [1) Tests de connectivité](#1--tests-de-connectivit-)
+        - [1) Tests de connectivité](#1-tests-de-connectivité)
       - [Question 6 - Tests de fonctionnement avec OSPF](#question-6---tests-de-fonctionnement-avec-ospf)
-      - [Question 7 - Configuration de VRRP:](#question-7---configuration-de-vrrp-)
-      - [Question 8 - Test global du réseau](#question-8---test-global-du-r-seau)
-        * [Vérification II - Faire valider par l’enseignant](#v-rification-ii---faire-valider-par-l-enseignant)
+      - [Question 7 - Configuration de VRRP:](#question-7---configuration-de-vrrp)
+      - [Question 8 - Test global du réseau](#question-8---test-global-du-réseau)
       - [Question 9 - Configuration SNMPv3](#question-9---configuration-snmpv3)
-        * [Vérification III - Faire valider par l’enseignant](#v-rification-iii---faire-valider-par-l-enseignant)
-      - [Question 10 : Encodage utilisé par SNMP](#question-10---encodage-utilis--par-snmp)
+      - [Question 10 : Encodage utilisé par SNMP](#question-10--encodage-utilisé-par-snmp)
       - [Question 11 - Analyse de trame SNMPv2](#question-11---analyse-de-trame-snmpv2)
       - [Question 12 - OID branche VRRP](#question-12---oid-branche-vrrp)
       - [Configuration de SNMPv2](#configuration-de-snmpv2)
-      - [Question 13 - Pourquoi la première commande échoue alors que la deuxième réussie ?](#question-13---pourquoi-la-premi-re-commande--choue-alors-que-la-deuxi-me-r-ussie--)
-      - [Question 14 - OID par rapport à mib-2 de la table vrrpOperTable. Relever dans la vrrpOperTable de R1 et expliquer les 8 premières colonnes et comment est constitué l’index.](#question-14---oid-par-rapport---mib-2-de-la-table-vrrpopertable-relever-dans-la-vrrpopertable-de-r1-et-expliquer-les-8-premi-res-colonnes-et-comment-est-constitu--l-index)
-        * [Vérification IV - Faire valider par l’enseignant](#v-rification-iv---faire-valider-par-l-enseignant)
-      - [Question 15 - Sur quel firewall appliquer configurer l'exception ?](#question-15---sur-quel-firewall-appliquer-configurer-l-exception--)
-      - [Question 16 - Protocle de transport pour le test de débit.](#question-16---protocle-de-transport-pour-le-test-de-d-bit)
-      - [Question 17 - Pourquoi les débits calculés sont-ils différents ?](#question-17---pourquoi-les-d-bits-calcul-s-sont-ils-diff-rents--)
-      - [Question 18 - Les compteurs d’octets sont disponibles en version 32 bits ou en version 64 bits. Justifier précisément quels OID il faut utiliser](#question-18---les-compteurs-d-octets-sont-disponibles-en-version-32-bits-ou-en-version-64-bits-justifier-pr-cis-ment-quels-oid-il-faut-utiliser)
-      - [Question 19 - Trouver facilement le débit entrant et sortant grâce à SNMP.](#question-19---trouver-facilement-le-d-bit-entrant-et-sortant-gr-ce---snmp)
-        * [Vérification V - Faire valider par l’enseignant](#v-rification-v---faire-valider-par-l-enseignant)
-  * [Partie III : Script bash de mesure de débit en SNMP](#partie-iii---script-bash-de-mesure-de-d-bit-en-snmp)
-      - [Question 20 - Pourquoi est-il plus pertinent d’utiliser le cron ou les timers systemd plutôt que la fonction sleep.](#question-20---pourquoi-est-il-plus-pertinent-d-utiliser-le-cron-ou-les-timers-systemd-plut-t-que-la-fonction-sleep)
-        * [Récupération du compteur d'octets.](#r-cup-ration-du-compteur-d-octets)
-        * [Gestion de la date et stockage dans un fichier.](#gestion-de-la-date-et-stockage-dans-un-fichier)
-        * [Lecture de la dernière ligne du fichier, calcul et enregistrement du débit.](#lecture-de-la-derni-re-ligne-du-fichier--calcul-et-enregistrement-du-d-bit)
-          + [Validation VI - Faire valider par l’enseignant](#validation-vi---faire-valider-par-l-enseignant)
-        * [Gestion du fichier vide et gestion du rebouclage du compteur d’octets.](#gestion-du-fichier-vide-et-gestion-du-rebouclage-du-compteur-d-octets)
-      - [Question 21 - Expliquer le problème posé par le rebouclage du compteur. Expliquer la solution à mettre en place.](#question-21---expliquer-le-probl-me-pos--par-le-rebouclage-du-compteur-expliquer-la-solution---mettre-en-place)
+      - [Question 13 - Pourquoi la première commande échoue alors que la deuxième réussie ?](#question-13---pourquoi-la-première-commande-échoue-alors-que-la-deuxième-réussie-)
+      - [Question 14 - OID par rapport à mib-2 de la table vrrpOperTable. Relever dans la vrrpOperTable de R1 et expliquer les 8 premières colonnes et comment est constitué l’index.](#question-14---oid-par-rapport-à-mib-2-de-la-table-vrrpopertable-relever-dans-la-vrrpopertable-de-r1-et-expliquer-les-8-premières-colonnes-et-comment-est-constitué-lindex)
+      - [Question 15 - Sur quel firewall appliquer configurer l'exception ?](#question-15---sur-quel-firewall-appliquer-configurer-lexception-)
+      - [Question 16 - Protocle de transport pour le test de débit.](#question-16---protocle-de-transport-pour-le-test-de-débit)
+      - [Question 17 - Pourquoi les débits calculés sont-ils différents ?](#question-17---pourquoi-les-débits-calculés-sont-ils-différents-)
+      - [Question 18 - Les compteurs d’octets sont disponibles en version 32 bits ou en version 64 bits. Justifier précisément quels OID il faut utiliser](#question-18---les-compteurs-doctets-sont-disponibles-en-version-32-bits-ou-en-version-64-bits-justifier-précisément-quels-oid-il-faut-utiliser)
+      - [Question 19 - Trouver facilement le débit entrant et sortant grâce à SNMP.](#question-19---trouver-facilement-le-débit-entrant-et-sortant-grâce-à-snmp)
+  - [Partie II : Script bash de mesure de débit en SNMP](#partie-ii--script-bash-de-mesure-de-débit-en-snmp)
+      - [Question 20 - Pourquoi est-il plus pertinent d’utiliser le cron ou les timers systemd plutôt que la fonction sleep.](#question-20---pourquoi-est-il-plus-pertinent-dutiliser-le-cron-ou-les-timers-systemd-plutôt-que-la-fonction-sleep)
+        - [Récupération du compteur d'octets.](#récupération-du-compteur-doctets)
+        - [Gestion de la date et stockage dans un fichier.](#gestion-de-la-date-et-stockage-dans-un-fichier)
+        - [Lecture de la dernière ligne du fichier, calcul et enregistrement du débit.](#lecture-de-la-dernière-ligne-du-fichier-calcul-et-enregistrement-du-débit)
+        - [Gestion du fichier vide et gestion du rebouclage du compteur d’octets.](#gestion-du-fichier-vide-et-gestion-du-rebouclage-du-compteur-doctets)
+      - [Question 21 - Expliquer le problème posé par le rebouclage du compteur. Expliquer la solution à mettre en place.](#question-21---expliquer-le-problème-posé-par-le-rebouclage-du-compteur-expliquer-la-solution-à-mettre-en-place)
       - [Question 22 - Relever le code de votre script.](#question-22---relever-le-code-de-votre-script)
-      - [Question 23 - Configuration de la tâche cron.](#question-23---configuration-de-la-t-che-cron)
-        * [Vérification VII - Faire valider par l’enseignant](#v-rification-vii---faire-valider-par-l-enseignant)
-        * [Script générique :](#script-g-n-rique--)
+      - [Question 23 - Configuration de la tâche cron.](#question-23---configuration-de-la-tâche-cron)
+        - [Script générique :](#script-générique-)
+  - [Partie III : Projet Prometheus / Grafana / Netflow](#partie-iii--projet-prometheus--grafana--netflow)
+    - [Synthèse sur Prometheus et Grafana](#synthèse-sur-prometheus-et-grafana)
+    - [Mise en place de la solution :](#mise-en-place-de-la-solution-)
+      - [1) Prérequis :](#1-prérequis-)
+      - [2) Configuration](#2-configuration)
+        - [a) Configuration du conteneur de l'exportateur SNMP](#a-configuration-du-conteneur-de-lexportateur-snmp)
+        - [b) Configuration du conteneur Prometheus](#b-configuration-du-conteneur-prometheus)
+        - [c) Configuration du conteneur Grafana](#c-configuration-du-conteneur-grafana)
+      - [3) Prometheus](#3-prometheus)
+      - [4) Grafana](#4-grafana)
+    - [Dashboards :](#dashboards-)
 
 
 ## Introduction
@@ -557,3 +561,122 @@ En conclusion, Prometheus se distingue dans l'écosystème de la surveillance pa
 
 </details>
 
+<!-- <details> -->
+  <summary>
+    Mise en place de la solution de monitoring.
+  </summary>
+
+Afin de faciliter le dépoiement de la solution de monitoring, nous avons utilisé Docker pour lancer les services Prometheus, Grafana, snmp_exporter. Les fichiers de configuration et les images Docker sont disponibles dans le répertoire `docker` du projet.
+<br>
+
+### Mise en place de la solution :
+
+![image (5).png](.attachments.3366/image%20%285%29.png)
+
+#### 1) Prérequis : 
+
+|Machine|Services|Ports|
+|---|---|:-:|
+|PC-A|Conteneur hébergeant un seveur WEB|80|
+|PC-B|Conteneur hébergeant Grafana|3000|
+|PC-B|Conteneur hébergeant Prometheus|9090|
+|PC-B|Conteneur hébergeant SNMP Exporter|9116|
+
+On créer un répertoire `~/monitoring` sur le PC-B pour stocker les fichiers de configuration et le fichier `docker-compose.yaml`.
+
+**Arborescence du projet:**
+```bash
+[etudiant@813-B ~]$ tree
+.
+└── monitoring                # Répertoire du projet
+    ├── docker-compose.yml    # Fichier de configuration Docker
+    ├── generator.yml         # Fichier de génération des OID
+    ├── grafana               # Répertoire de configuration de Grafana
+    │   ├── datasource.yml    # Fichier de configuration de la source de données
+    │   └── grafana.ini       # Fichier de configuration de Grafana
+    └── prometheus            # Répertoire de configuration de Prometheus
+        ├── prometheus.yml    # Fichier de configuration de Prometheus
+        └── snmp-exporter     # Répertoire de configuration de SNMP Exporter
+            └── snmp.yml      # Fichier de configuration de SNMP Exporter
+```
+
+
+<https://github.com/prometheus/snmp_exporter>
+
+#### 2) Configuration
+
+Pour fonctionner correctement et récupérer des données issues de requêtes SNMP, Prometheus nécessite un exportateur SNMP. Dans notre cas, nous utiliserons `snmp_exporter`
+
+##### a) Configuration du conteneur de l'exportateur SNMP
+
+Le générateur (`generator.yml`) est un fichier dans lequel seront définis les OID SNMP à utiliser dans les requêtes et à exporter vers Prometheus. Ce dernier sera utilisé pour générer le fichier de configuration YAML minimaliste qui sera employé dans notre conteneur `snmp_exporter`.
+
+Le fichier `generator.yml` se trouve dans le répertoire suivant : `~/monitoring/generator/generator.yml`.
+
+Pour générer le fichier de configuration, il faut se placer dans le répertoire `~/monitoring/generator` et exécuter la commande suivante `make generate`.
+
+Cette commande va créer un fichier `snmp.yml`dans le même répertoire. Ce fichier contient les informations nécessaires pour l'exportateur SNMP. Le fichier a été déplacé dans le répertoire `~/monitoring/prometheus/snmp-exporter/snmp.yml`.
+
+Une fois le fichier de configuration généré, il faut créer un fichier `docker-compose.yaml` pour définir les services et les réseaux Docker nécessaires pour notre solution de monitoring. Le fichier `docker-compose.yaml` se trouve dans le répertoire `~/monitoring/docker-compose.yaml`.
+
+##### b) Configuration du conteneur Prometheus
+
+**Configuration des jobs Prometheus**
+
+La récupération des données sur Prometheus est spécifiée dans le fichier `prometheus.yml`. C'est dans ce fichiers que sont définies les cibles à monitorer, les intervalles de requêtes, la ou les communautés à utiliser, etc. mais aussi l'adresse IP de l'exportateur SNMP. Le fichier de configuration est situé dans le répertoire `~/monitoring/prometheus/prometheus.yml`.
+
+**Configuration du conteneur**
+
+   La configuration du conteneur Prometheus dans le fichier [docker-compose.yml](https://github.com/gigallace/24-813-GIAMBI-BUTHAUD/blob/main/projet/docker-compose.yml) et très légère.  
+   En effet seuls les volumes et le réseau Docker "monitor" sont a spécifier : 
+
+   ```yaml
+    volumes:
+      - ./prometheus:/etc/prometheus
+    networks:
+      - monitor
+   ```
+
+Le réseau "monitor" est un réseau Docker de type bridge qui permettra aux conteneurs de communiquer entre eux.
+
+##### c) Configuration du conteneur Grafana
+
+**Configuration de la datasource**
+
+Le fichier `datasource.yml` est créé. Ilm contioent les informations concernant la source de données que Grafana va utiliser, dans notre cas, on renseigne l'url de notre conteneur Prometheus et la méthode de connexion au serveur. Le fichier est situé dans le répertoire `~/monitoring/grafana/datasource.yml`.
+
+
+1. Configuration du conteneur 
+
+Dans notre fichier [docker-compose.yml](https://github.com/gigallace/24-813-GIAMBI-BUTHAUD/blob/main/projet/docker-compose.yml) créé précédemment, nous ajoutons un conteneur Grafana, nous précisons les identifiants de connexion, les paramètres du service SMTP (que nous utiliserons ultérieurement, "l'import" du fichier de sources "datasource.yml" et les volumes de stockage persistants de la configuration et des données Grafana. 
+
+#### 3) Prometheus
+
+Avant d'interagir avec Grafana, il est nécessaire de vérifier que Promotheus fonctionne correctement et que les jobs configurés sont bien exécutés.
+
+
+Sur la page `TARGETS` il y a les cibles configurées dans le fichier `prometheus.yml`.
+
+**SOFIANE SCREEN**
+
+La page `GRAPH` permet de confirmer la remontée des données. En tapant un des OIDs exportés précédemment, il est possible de retrouver les données collectées.
+
+**SOFIANE SCRIPT**
+
+Insérer un image : `![image.png](.chemin/vers/image.png)`
+
+#### 4) Grafana
+
+### Dashboards : 
+
+**SOFIANE SCRIPTS**
+
+
+Requête PromQL débit descendant R1 : 
+
+`rate(ifHCInOctets{ifIndex="3", instance="10.200.1.251"}[$__rate_interval]) * 8`
+
+Requête PromQL uptime R1 : 
+
+`sysUpTime{instance="10.200.1.251"}`
+</details>

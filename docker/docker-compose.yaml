@@ -1,7 +1,23 @@
 version: '3.7'
 services:
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=secret  # Change this password!
+    depends_on:
+      - prometheus
+    ports:
+      - '3000:3000'
+    networks:
+      - monitoring
+
   prometheus:
     image: prom/prometheus:latest
+    container_name: prometheus
     volumes:
       - ./prometheus:/etc/prometheus
     command:
@@ -13,16 +29,15 @@ services:
     networks:
       - monitoring
 
-  grafana:
-    image: grafana/grafana:latest
+  snmp-exporter:
+    image: prom/snmp-exporter:latest
+    container_name: snmp-exporter
     volumes:
-      - grafana-data:/var/lib/grafana
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=secret  # Change this password!
-    depends_on:
-      - prometheus
+      - ./snmp-exporter:/etc/snmp_exporter:rw
+    command:
+      - '--config.file=/etc/snmp_exporter/snmp.yml'
     ports:
-      - '3000:3000'
+      - '9116:9116'
     networks:
       - monitoring
 

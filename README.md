@@ -657,7 +657,7 @@ Avant d'interagir avec Grafana, il est nécessaire de vérifier que Promotheus f
 
 Sur la page `TARGETS` il y a les cibles configurées dans le fichier `prometheus.yml`.
 
-**SOFIANE SCREEN**
+![prometheus-target.png](./.attachments.3011/prometheus-target.png)
 
 La page `GRAPH` permet de confirmer la remontée des données. En tapant un des OIDs exportés précédemment, il est possible de retrouver les données collectées.
 

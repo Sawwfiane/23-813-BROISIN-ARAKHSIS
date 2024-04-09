@@ -661,15 +661,17 @@ Sur la page `TARGETS` il y a les cibles configurées dans le fichier `prometheus
 
 La page `GRAPH` permet de confirmer la remontée des données. En tapant un des OIDs exportés précédemment, il est possible de retrouver les données collectées.
 
-**SOFIANE SCRIPT**
-
-Insérer un image : `![image.png](.chemin/vers/image.png)`
+![graph-prometheus.png](./.attachments.3011/graph-prometheus.png)
 
 #### 4) Grafana
 
 ### Dashboards : 
 
-**SOFIANE SCRIPTS**
+ Voici la surveillance de R2 avant de faire tomber le liens entre R1 et le LAN :
+![r2-secondaire.png](./.attachments.3011/r2-secondaire.png)
+
+ Voici la surveillance de R2 après de faire tomber le liens entre R1 et le LAN :
+![r2-master.png](./.attachments.3011/r2-master.png)
 
 
 Requête PromQL débit descendant R1 : 

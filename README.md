@@ -696,7 +696,7 @@ from_name = Grafana
 ```
 
 Puis nous ajoutons un declancheur du type lorsque l'etat du vrrp change sur R2.
-![r2-master.png](./.attachments.3011/r2-master.png)
+![conf-alert-grafana.png](./.attachments.3011/conf-alert-grafana.png)
 
 Aprés le coupage  du lien entre R1 et le LAN, R2 devient maitre et ous recevons bien l'email nous indiqunet un changement quand a l'etat du stauts VRRP de R2 :
 ![alerte-email.png](./.attachments.3011/alerte-email.png)
